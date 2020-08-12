@@ -1,15 +1,16 @@
+#!/usr/bin/env python3.8
+# -*- coding: utf-8 -*-
+
 import psycopg2
 import traceback
 import json
-#dbname= input(" Saisir le nom de votre base de donnée:\n")
-#username = input(" Saisir le nom de votre utilistauer (username):\n")
-#password = input("Saisir votre mot de passe:\n ")
-dbname = "impacters"
-username = "postgres"
-password = "0nlym30rm3."
+dbname= input(" Saisir le nom de votre base de donnée:\n")
+username = input(" Saisir le nom de votre utilistauer (username):\n")
+password = input("Saisir votre mot de passe:\n ")
+
 
 def make_position(role,territory_code,territory_name,start_date,end_date):
-    if (end_date == 0):
+    if (end_date == None):
         return {
         "role": role,
         "territory_code": territory_code,
@@ -27,10 +28,10 @@ def make_position(role,territory_code,territory_name,start_date,end_date):
 
 def make_positions(id_physical_person, cursor):
     positions = []
-    cursor.execute("SELECT role, start_date, end_date, legal_entity_id from position where  physical_person_id = '"+id_physical_person+"' ORDER BY start_date;")
+    cursor.execute("SELECT role, start_date, end_date, legal_entity_id from position where  physical_person_id = '{}' ORDER BY start_date;".format(id_physical_person))
     rows = cursor.fetchall()
     for position in rows:
-        cursor.execute("SELECT code, name from location where id = (SELECT location_id from legal_entity where id ='"+str(position[3])+"' ); ")
+        cursor.execute("SELECT code, name from location where id = (SELECT location_id from legal_entity where id ='{}' ); ".format(position[3]))
         location = cursor.fetchall()[0]
         role = position[0]
         territory_code = location[0]
@@ -52,12 +53,12 @@ def make_impacters(person_ids, cursor):
     impacters = []
     i=0
     for id_physical_person in person_ids:
-        print (i)
         i+=1
-        cursor.execute("SELECT firstname, lastname, impacter_id from physical_person where id = '"+str(id_physical_person[0])+"';")
+        cursor.execute("SELECT firstname, lastname, impacter_id from physical_person where id = '{}';".format(id_physical_person[0]))
         impacter = cursor.fetchall()[0]
-        id = impacter[2]
         name = impacter[0] + " "+ impacter[1]
+        cursor.execute("SELECT surname_text from surname where impacter_id = '{}'".format(impacter[2]))
+        id = cursor.fetchall()[0][0]
         positions = make_positions(str(id_physical_person[0]),cursor)
         impacters.append(make_impacter(id,name,positions))
     return impacters
@@ -68,8 +69,7 @@ def make_impacters(person_ids, cursor):
     
 
 try:
-    connect_str = "dbname='"+dbname+"' user='"+username+"' host='localhost' " + \
-                  "password='"+password+"'"
+    connect_str = "dbname='{}' user='{}' host='localhost' password='{}'".format(dbname,username,password)
     # use our connection values to establish a connection
     conn = psycopg2.connect(connect_str)
     # create a psycopg2 cursor that can execute queries
@@ -78,12 +78,12 @@ try:
     cursor.execute("""SELECT DISTINCT physical_person_id from position where NOW()::timestamp::date < end_date;""")
     conn.commit() # <--- makes sure the change is shown in the database
     person_ids = cursor.fetchall()
-    impacters = make_impacters(person_ids[0:1],cursor)
+    impacters = make_impacters(person_ids[0:10],cursor)
     jsonfile = {
         "impacters": impacters
     }
-    with open("test.json", "w", encoding="utf-8") as outfile:  
-        json.dump(jsonfile, outfile) 
+    with open("test.json", "w", encoding="utf-16") as outfile:  
+        json.dump(jsonfile, outfile, indent=4, ensure_ascii=False) 
     cursor.close()
     conn.close()
 except Exception as e:
