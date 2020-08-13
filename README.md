@@ -176,8 +176,8 @@ Les options :
 ## 5.Conclusion: 
 Les fichiers rendus sont :
 - ReadMe.md : C'est ce fichier écrit dans le cadre de la tache numéro deux.
-- Script.py : Le script python qui réalise la quatrième partie de la tache une. 
-- 
+- MELLAL_Houdaifa_impacters-json-extraction.py : Le script python qui réalise la quatrième partie de la tache une. 
+- mendat_encours.json : Le fichier json généré par le script python.
 - MELLAL-Houdaifa_roles-extract.csv: Les roles extraires dans le cadre de la troisième partie de la tache une.
 - MELLAL-Houdaifa_associations-extract.csv: Les associations (ID/Nom) extraires dans le cadre de la deuxième partie de la tache une.
 
