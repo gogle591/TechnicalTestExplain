@@ -1,4 +1,4 @@
-#ReadMe : Test technique - Alternance - Junior Data Manager
+# ReadMe : Test technique - Alternance - Junior Data Manager
 
 ## 1.Intoduction: 
 Le test consiste a réalisé un traitement sur un dump d'une base de donnée PosteGresSql dans le cadre d'un projet intitulé de **Goodwill**. Il est composé en trois taches essentiel qui sont:
